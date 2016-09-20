@@ -10,7 +10,9 @@ function demo_entity_entity_info() {
       'id' => 'did',
     ),
     'bundle keys' => array('bundle' => 'type'),
-    'bundles' => array()
+    'bundles' => array(),
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
   );
   $entity['demo']['bundles']['demo'] = array(
     'label' => t('Demo bundle'),
@@ -20,6 +22,32 @@ function demo_entity_entity_info() {
     ),
   );
 return $entity;
+}
+
+function demo_entity_entity_property_info(){
+$info = array();
+$properties = &$info['demo']['properties'];
+$properties['did'] = array(
+    'type' => 'integer',
+    'schema_field' => 'did',
+    'label' => t('Id de l entité démo'),
+    'setter callback' => 'entity_property_verbatim_set'
+);
+$properties['title'] = array(
+'type' => 'text',
+'schema_field' => 'title',
+'label' => t('Titre de l entité démo'),
+'setter callback' => 'entity_property_verbatim_set'
+);
+
+$properties['type'] = array(
+'type' => 'text',
+'schema_field' => 'type',
+'label' => t('Type de l entité démo'),
+'setter callback' => 'entity_property_verbatim_set'
+);
+
+return $info;
 }
 
 function demo_entity_uri($demo) {
@@ -41,6 +69,13 @@ function demo_entity_menu() {
     'page callback' => 'demo_entity_list_entities',
     'access arguments' => array('administer demo'),
   );
+$items['demo/add'] = array(
+    'title' => t('Ajouter une démo'),
+    'access arguments' => array('add demo'),
+    'file' => 'demo.form.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('demo_add_form'),
+);
 return $items;
 }
 
@@ -77,4 +112,8 @@ $content[] = array(
 );
 }
 return $content;
+}
+
+function demo_entity_update_7001() {
+db_add_field('demo','type', array('type' => 'varchar', 'default' => 'demo', 'length' => '128', 'not null' => TRUE, 'description' => 'Type of demo entity used'));
 }
