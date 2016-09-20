@@ -1,0 +1,80 @@
+<?php
+
+function demo_entity_entity_info() {
+  $entity['demo'] = array(
+    'label' => t('Demo entity'),
+    'base table' => 'demo',
+    'uri callback' => 'demo_entity_uri',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'did',
+    ),
+    'bundle keys' => array('bundle' => 'type'),
+    'bundles' => array()
+  );
+  $entity['demo']['bundles']['demo'] = array(
+    'label' => t('Demo bundle'),
+    'admin' => array(
+      'path' => 'admin/demos/manage',
+      'access arguments' => array('administer demo')
+    ),
+  );
+return $entity;
+}
+
+function demo_entity_uri($demo) {
+  return(array('path' => 'demo/'. $demo->did));
+}
+
+function demo_entity_permission() {
+  return(array(
+    'administer demo' => array(
+      'title' => t('Administrer les démos'),
+      'description' => t('Permissions permettant d\'administrer l\'entité démo')
+    )
+));
+}
+
+function demo_entity_menu() {
+  $items['admin/demos/manage'] = array(
+    'title' => t('Administrer les démos'),
+    'page callback' => 'demo_entity_list_entities',
+    'access arguments' => array('administer demo'),
+  );
+return $items;
+}
+
+function demo_entity_entity_load_multiple($did = FALSE, $conditions = array(), $reset = FALSE){
+  return entity_load('demo', $did, $conditions, $reset);
+}
+
+function demo_entity_list_entities() {
+  $content = array();
+  // Load all of our entities.
+  $entities = demo_entity_entity_load_multiple();
+  if (!empty($entities)) {
+  foreach ($entities as $entity) {
+    // Create tabular rows for our entities.
+    $rows[] = array(
+    'data' => array(
+    'id' => $entity->did,
+    'title' => l($entity->title, 'demo/' . $entity->did),
+    ),
+    );
+    }
+    // Put our entities into a themed table. See theme_table() for details.
+    $content['entity_table'] = array(
+    '#theme' => 'table',
+    '#rows' => $rows,
+    '#header' => array(t('ID'), t('Title')),
+    );
+    }
+else {
+// There were no entities. Tell the user.
+$content[] = array(
+'#type' => 'item',
+'#markup' => t('No demo entities currently exist.'),
+);
+}
+return $content;
+}

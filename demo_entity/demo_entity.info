@@ -1,0 +1,4 @@
+name = Entity Demo
+description = Mon entité de démonstration pour gérer des tables, des formulaires des droits d'accès
+core = 7.x
+Package = FormationDev
