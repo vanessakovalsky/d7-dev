@@ -117,3 +117,22 @@ return $content;
 function demo_entity_update_7001() {
 db_add_field('demo','type', array('type' => 'varchar', 'default' => 'demo', 'length' => '128', 'not null' => TRUE, 'description' => 'Type of demo entity used'));
 }
+
+function demo_entity_views_api(){
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'demo_entity') . '/views',
+  );
+}
+
+function demo_entity_block_info(){
+    $blocks['mon_duper_block'] = array(
+        'info' => t('Mon merveilleux block en code'),
+        'content' => t('Mon contenu'),
+    );
+    return $blocks;
+}
+
+
+
+
