@@ -2,3 +2,4 @@ name = Demo Publika
 description = Creation d un premier module Publika
 package = FormationDev
 core = 7.x
+files[] = demo_publika.test

@@ -168,7 +168,35 @@ function babyfoot_entity_uri($babyfoot) {
 }
 
 function admin_babyfoot(){
-  return 'Admin babyfoot';
+  $content = array();
+   // Load all of our entities.
+   $entities = entity_load('babyfoot');
+   if (!empty($entities)) {
+     foreach ($entities as $entity) {
+       // Create tabular rows for our entities.
+       $rows[] = array(
+         'data' => array(
+           'id' => $entity->bid,
+           'item_description' => l($entity->title, 'babyfoot/' . $entity->bid),
+           'bundle' => $entity->type,
+         ),
+       );
+     }
+     // Put our entities into a themed table. See theme_table() for details.
+     $content['entity_table'] = array(
+       '#theme' => 'table',
+       '#rows' => $rows,
+       '#header' => array(t('ID'), t('Title'), t('Bundle')),
+     );
+   }
+   else {
+     // There were no entities. Tell the user.
+     $content[] = array(
+       '#type' => 'item',
+       '#markup' => t('No babyfoot entities currently exist.'),
+     );
+   }
+   return $content;
 }
 
 function babyfoot_load($bid){
@@ -190,4 +218,11 @@ function babyfoot_display_one($bid){
   // On attache également les champs supplémentaires
   $content[] = field_attach_view('babyfoot', $babyfoot, 'full') ;
   return $content ;
+}
+
+function demo_publika_views_api(){
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'demo_publika') . '/views',
+  );
 }

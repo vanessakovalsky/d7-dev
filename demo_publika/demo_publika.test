@@ -1,0 +1,29 @@
+<?php
+
+class DemoPublikaTestCase extends DrupalWebTestCase {
+    protected $privileged_user;
+
+    public static function getInfo() {
+      return array(
+        'name' => 'Demo Publika Example',
+        'description' => 'Ensure that the babyfoot entity provided functions properly.',
+        'group' => 'Demo Publika',
+      );
+    }
+
+    public function setUp() {
+       parent::setUp(array('demo_publika', 'entity'));
+       // Create and log in our privileged user.
+       $this->privileged_user = $this->drupalCreateUser(array(
+         'access content',
+         ));
+       $this->drupalLogin($this->privileged_user);
+     }
+
+     public function testBabyfootCreate() {
+       // Create node to edit.
+       $babyfoot = entity_create('babyfoot', array('title' => 'Test babyfoot create', 'type' => 'babyfoot', 'vid' => '42'));
+       $babyfoot->save();
+       $this->assertNotNull($babyfoot->bid);
+     }
+}
