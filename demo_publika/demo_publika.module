@@ -1,0 +1,145 @@
+<?php
+/*
+ * Add sending to ws data from form
+ */
+
+ function demo_publika_node_submit($node, $form, &$form_state){
+   if ($node->type == 'article'){
+     drupal_set_message('article enregistré');
+   }
+ }
+
+/*
+ * Remove submit action and replace with custom one
+ */
+function demo_publika_form_alter(&$form, &$form_state, $form_id){
+    if($form_id == 'article_node_form'){
+      dpm($form);
+      $form['actions']['submit']['#submit'] = ['ma_fonction_amoi'];
+    }
+  }
+
+  function ma_fonction_amoi(){
+
+  }
+
+/*
+ * Hook menu to create 2 pages
+ */
+
+function demo_publika_menu(){
+  $items['admin/publika'] = array(
+    'title' => t('Admin Publika'),
+    'page callback' => 'admin_publika',
+    'access arguments' => array('administer publika'),
+  );
+  $items['publika'] = array(
+    'title' => t('Publika'),
+    'page callback' => 'publika',
+    'access arguments' => array('access publika'),
+  );
+  $items['admin/structure/babyfoot'] = array(
+    'title' => t('Admin Babyfoot'),
+    'page callback' => 'admin_babyfoot',
+    'access arguments' => array('administer publika'),
+  );
+  $items['babyfoot/add'] = array(
+    'title' => t('Ajouter un babyfoot'),
+    'access arguments' => array('add babyfoot'),
+    'file' => 'babyfoot.form.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('babyfoot_add_form'),
+  );
+  return $items;
+}
+
+function demo_publika_permission(){
+  return array(
+    'administer publika' => array(
+      'title' => t('Administrer Publika'),
+      'description' => t('Accéder à la page admin Publika'),
+    ),
+    'access publika' => array(
+      'title' => t('Access Publika'),
+      'description' => t('Accéder à la page publique Publika'),
+    )
+  );
+}
+
+function admin_publika(){
+  drupal_set_message('Admin publika page');
+  $content['raw_markup'] = array(
+    '#type' => 'markup',
+    '#markup' => '<p>Admin Publika</p>',
+  );
+  return $content;
+}
+
+function publika(){
+  drupal_set_message('Publika page');
+  $content['raw_markup'] = array(
+    '#type' => 'markup',
+    '#markup' => '<p>Publika page</p>',
+  );
+  return $content;
+}
+
+function demo_publika_entity_info(){
+  $entity['babyfoot'] = array(
+    'label' => t('BabyFoot entity'),
+    'base table' => 'babyfoot',
+    'revision table' => 'babyfoot_revision',
+    'uri callback' => 'babyfoot_entity_uri',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'bid',
+      'revision' => 'vid',
+  ),
+    'bundle keys' => array('bundle' => 'type'),
+    'bundles' => array(),
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+  );
+  $entity['babyfoot']['bundles']['babyfoot'] = array(
+    'label' => t('Baby bundle'),
+    'admin' => array(
+      'path' => 'admin/structure/babyfoot/manage',
+      'access arguments' => array('administer publika')
+    ),
+  );
+  return $entity;
+}
+
+function demo_publika_entity_property_info(){
+  $info = array();
+  $properties = &$info['babyfoot']['properties'];
+  $properties['bid'] = array(
+      'type' => 'integer',
+      'schema_field' => 'bid',
+      'label' => t('Id de l entité babyfoot'),
+      'setter callback' => 'entity_property_verbatim_set'
+  );
+
+  $properties['title'] = array(
+    'type' => 'text',
+    'schema_field' => 'title',
+    'label' => t('Titre de l entité Babyfoot'),
+    'setter callback' => 'entity_property_verbatim_set'
+  );
+
+  $properties['type'] = array(
+    'type' => 'text',
+    'schema_field' => 'type',
+    'label' => t('Type de l entité Babyfoot'),
+    'setter callback' => 'entity_property_verbatim_set'
+  );
+  return $info;
+}
+
+function babyfoot_entity_uri($babyfoot) {
+  return(array('path' => 'babyfoot/'. $babyfoot->bid));
+}
+
+function admin_babyfoot(){
+  return 'Admin babyfoot';
+}
