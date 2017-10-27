@@ -1,6 +1,8 @@
 <?php
 
 function babyfoot_add_form($form, &$form_state, $babyfoot = NULL){
+  $babyfoot = babyfoot_load($babyfoot);
+
   $form['title'] = array(
     '#title' => t('Babyfoot name'),
     '#type' => 'textfield',
@@ -30,7 +32,8 @@ function babyfoot_add_form_submit($form, &$form_state){
   $babyfoot->title = $form_state['values']['title'];
   $babyfoot->type = 'babyfoot';
   $babyfoot->vid = $babyfoot->vid +1;
- $babyfoot->save();
- drupal_set_message(t('The babyfoot: @title has been saved.', array('@title' => $babyfoot->title)));
- $form_state['redirect'] = 'admin/babyfoot';
+  field_attach_submit('babyfoot', $babyfoot, $form, $form_state);
+  $babyfoot->save();
+  drupal_set_message(t('The babyfoot: @title has been saved.', array('@title' => $babyfoot->title)));
+  $form_state['redirect'] = 'admin/babyfoot';
 }

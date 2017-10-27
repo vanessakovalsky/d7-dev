@@ -14,8 +14,8 @@
  */
 function demo_publika_form_alter(&$form, &$form_state, $form_id){
     if($form_id == 'article_node_form'){
-      dpm($form);
-      $form['actions']['submit']['#submit'] = ['ma_fonction_amoi'];
+      //dpm($form);
+      //$form['actions']['submit']['#submit'] = ['ma_fonction_amoi'];
     }
   }
 
@@ -49,6 +49,33 @@ function demo_publika_menu(){
     'file' => 'babyfoot.form.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('babyfoot_add_form'),
+  );
+  $items['babyfoot/%'] = array(
+  'title callback' => 'babyfoot_title',
+  'title arguments' => array(1),
+  'page callback' => 'babyfoot_display_one',
+  'page arguments' => array(1),
+  'access arguments' => array('access content'),
+  'type' => MENU_CALLBACK
+  );
+
+
+
+  // L'onglet Voir
+  $items['babyfoot/%/view'] = array(
+  'title' => 'view',
+  'access arguments' => array('access content'),
+  'weight' => -3,
+  'type' => MENU_DEFAULT_LOCAL_TASK
+  );
+  // L'onglet Modifier
+  $items['babyfoot/%/edit'] = array(
+  'title' => 'edit',
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('babyfoot_add_form', 1),
+  'access arguments' => array('access content'),
+  'file' => 'babyfoot.form.inc',
+  'type' => MENU_LOCAL_TASK
   );
   return $items;
 }
@@ -142,4 +169,25 @@ function babyfoot_entity_uri($babyfoot) {
 
 function admin_babyfoot(){
   return 'Admin babyfoot';
+}
+
+function babyfoot_load($bid){
+  $babyfoot = entity_load('babyfoot',array($bid));
+  return $babyfoot[$bid];
+}
+
+function babyfoot_title($bid){
+  $title = babyfoot_load($bid)->title;
+  return t('@hotel', array('@hotel' => $title));
+}
+
+function babyfoot_display_one($bid){
+  // On récupère l'objet Menus chargé par entity_load
+  $babyfoot = babyfoot_load($bid);
+  $content[] = array(
+  '#markup' => l($babyfoot->title, 'babyfoot/' . $babyfoot->bid )
+  );
+  // On attache également les champs supplémentaires
+  $content[] = field_attach_view('babyfoot', $babyfoot, 'full') ;
+  return $content ;
 }
