@@ -1,0 +1,138 @@
+<?php
+
+function demo_entity_entity_info() {
+  $entity['demo'] = array(
+    'label' => t('Demo entity'),
+    'base table' => 'demo',
+    'uri callback' => 'demo_entity_uri',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'did',
+    ),
+    'bundle keys' => array('bundle' => 'type'),
+    'bundles' => array(),
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+  );
+  $entity['demo']['bundles']['demo'] = array(
+    'label' => t('Demo bundle'),
+    'admin' => array(
+      'path' => 'admin/demos/manage',
+      'access arguments' => array('administer demo')
+    ),
+  );
+return $entity;
+}
+
+function demo_entity_entity_property_info(){
+$info = array();
+$properties = &$info['demo']['properties'];
+$properties['did'] = array(
+    'type' => 'integer',
+    'schema_field' => 'did',
+    'label' => t('Id de l entité démo'),
+    'setter callback' => 'entity_property_verbatim_set'
+);
+$properties['title'] = array(
+'type' => 'text',
+'schema_field' => 'title',
+'label' => t('Titre de l entité démo'),
+'setter callback' => 'entity_property_verbatim_set'
+);
+
+$properties['type'] = array(
+'type' => 'text',
+'schema_field' => 'type',
+'label' => t('Type de l entité démo'),
+'setter callback' => 'entity_property_verbatim_set'
+);
+
+return $info;
+}
+
+function demo_entity_uri($demo) {
+  return(array('path' => 'demo/'. $demo->did));
+}
+
+function demo_entity_permission() {
+  return(array(
+    'administer demo' => array(
+      'title' => t('Administrer les démos'),
+      'description' => t('Permissions permettant d\'administrer l\'entité démo')
+    )
+));
+}
+
+function demo_entity_menu() {
+  $items['admin/demos/manage'] = array(
+    'title' => t('Administrer les démos'),
+    'page callback' => 'demo_entity_list_entities',
+    'access arguments' => array('administer demo'),
+  );
+$items['demo/add'] = array(
+    'title' => t('Ajouter une démo'),
+    'access arguments' => array('add demo'),
+    'file' => 'demo.form.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('demo_add_form'),
+);
+return $items;
+}
+
+function demo_entity_entity_load_multiple($did = FALSE, $conditions = array(), $reset = FALSE){
+  return entity_load('demo', $did, $conditions, $reset);
+}
+
+function demo_entity_list_entities() {
+  $content = array();
+  // Load all of our entities.
+  $entities = demo_entity_entity_load_multiple();
+  if (!empty($entities)) {
+  foreach ($entities as $entity) {
+    // Create tabular rows for our entities.
+    $rows[] = array(
+    'data' => array(
+    'id' => $entity->did,
+    'title' => l($entity->title, 'demo/' . $entity->did),
+    ),
+    );
+    }
+    // Put our entities into a themed table. See theme_table() for details.
+    $content['entity_table'] = array(
+    '#theme' => 'table',
+    '#rows' => $rows,
+    '#header' => array(t('ID'), t('Title')),
+    );
+    }
+else {
+// There were no entities. Tell the user.
+$content[] = array(
+'#type' => 'item',
+'#markup' => t('No demo entities currently exist.'),
+);
+}
+return $content;
+}
+
+function demo_entity_update_7001() {
+db_add_field('demo','type', array('type' => 'varchar', 'default' => 'demo', 'length' => '128', 'not null' => TRUE, 'description' => 'Type of demo entity used'));
+}
+
+function demo_entity_views_api(){
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'demo_entity') . '/views',
+  );
+}
+
+function demo_entity_block_info(){
+    $blocks['mon_duper_block'] = array(
+        'info' => t('Mon merveilleux block en code'),
+        'content' => t('Mon contenu'),
+    );
+    return $blocks;
+}
+
+
+
+

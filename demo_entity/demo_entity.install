@@ -1,0 +1,20 @@
+<?php
+/* Ajout de ma table demo */
+function demo_entity_schema() {
+  $schema['demo'] = array(
+    'fields' => array(
+      'did' => array(
+        'type' => 'serial',
+   	    'unsigned' => TRUE,
+        'not null' => TRUE
+	),
+	'title' => array(
+  	   'type' => 'text',
+       'size' => 'medium',
+	   'not null' => TRUE
+	  ),
+  	),
+ 	'primary key' => array('did')
+  );
+  return $schema;
+}

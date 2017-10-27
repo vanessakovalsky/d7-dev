@@ -1,0 +1,31 @@
+<?php
+
+function demo_module_menu() {
+  $items['demo_module'] = array(
+    'title' => 'Mon menu de démo',
+    'descriptipn' => 'Mon menu de démonstration pour montrer que je peux bip...',
+    'page callback' => 'demo_module_page',
+    'access callback' => TRUE,
+  );
+return $items;
+}
+
+function demo_module_page() {
+  global $user;
+  $utilisateur = user_load($user->uid);
+  $name = $utilisateur->name;
+  return 'Salut '. $name;
+}
+
+function demo_module_node_insert($node){
+  if($node->type == 'article') {
+    global $user;
+    $utilisateur_connecte = user_load($user->uid);
+    $wrapper_utilisateur = entity_metadata_wrapper('user', $utilisateur_connecte);
+    $nouvelle_valeur_compteur = $wrapper_utilisateur->field_compteur->value() +1;
+    $wrapper_utilisateur->field_compteur->set($nouvelle_valeur_compteur);
+    $wrapper_utilisateur->save();
+    drupal_set_message('Nouvelle valeur du compteur'.$wrapper_utilisateur->field_compteur->value().'.');
+watchdog('');
+  }
+}
