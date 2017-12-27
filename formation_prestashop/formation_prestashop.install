@@ -5,4 +5,58 @@ function formation_prestashop_install() {
     ->fields(array('weight' => 45))
     ->condition('name', 'formation_prestashop', '=')
     ->execute();
+
+    $vocabulary = array(
+      'name' => 'Version',
+      'decription' => 'Vocabulaire de démo',
+      'machine_name' => 'version',
+    );
+    taxonomy_vocabulary_save($vocabulary);
+
+    $vocab = taxonomy_vocabulary_machine_name_load('version');
+
+    $term1 = (object) array(
+     'name' => 'Bleu',
+     'description' => 'This is term 1',
+     'vid' => $vocab->vid,
+    );
+
+    taxonomy_term_save($term1);
+
+    $term2 = (object) array(
+     'name' => 'Rouge',
+     'description' => 'This is term 2',
+     'vid' => $vocab->vid,
+    );
+
+    taxonomy_term_save($term2);
+}
+
+function formation_prestashop_update_7002(){
+  $vocabulary = array(
+    'name' => 'Version',
+    'decription' => 'Vocabulaire de démo',
+    'machine_name' => 'version',
+  );
+  taxonomy_vocabulary_save($vocabulary);
+}
+
+function formation_prestashop_update_7003(){
+  $vocab = taxonomy_vocabulary_machine_name_load('version');
+
+  $term1 = (object) array(
+   'name' => 'Bleu',
+   'description' => 'This is term 1',
+   'vid' => $vocab->vid,
+  );
+
+  taxonomy_term_save($term1);
+
+  $term2 = (object) array(
+   'name' => 'Rouge',
+   'description' => 'This is term 2',
+   'vid' => $vocab->vid,
+  );
+
+  taxonomy_term_save($term2);
 }
