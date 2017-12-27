@@ -23,17 +23,55 @@ function formation_prestashop_permission() {
   ));
 }
 
-function formation_prestashop_menu_alter(&$items){
+/*function formation_prestashop_menu_alter(&$items){
   $items['admin/modules'] = array(
     'title' => 'Liste des modules',
     'access callback' => TRUE,
   );
   return $items;
-}
+}*/
 
 function formation_prestashop_preprocess_node(&$vars){
   if($vars['type'] = 'couleurpage'){
     $term_taxo = $vars['field_taxo_couleur'][0]['taxonomy_term']->name;
     $vars['classes_array'][] = strtolower($term_taxo);
   }
+}
+
+function formation_prestashop_comment_insert($comment){
+  $node = node_load($comment->nid);
+  $node_wrapper = entity_metadata_wrapper('node',$node);
+  $nouvelle_valeur_compteur = $node_wrapper->field_compteur_commentaire->value()+1;
+  $node_wrapper->field_compteur_commentaire->set($nouvelle_valeur_compteur);
+  $node_wrapper->save();
+}
+
+function formation_prestashop_form_alter(&$form, &$form_state, $form_id){
+  if($form_id == 'couleurpage_node_form'){
+    if($form_state['build_info']['args'][0]->field_compteur_commentaire['und'][0]['value'] > 5){
+      $form['field_compteur_commentaire']['#attributes']['class'][] = 'many-comments';
+     }
+     else {
+        $form['field_compteur_commentaire']['#attributes']['class'][] = 'few-comments';
+     }
+    $form['actions']['submit']['#submit'][] = 'formation_submit_mail';
+  }
+}
+
+function formation_submit_mail(){
+  $valid_email = 'v.david@kovalibre.com';
+    $from = 'noreply@example.com';
+    $body[] = 'Email: '.$valid_email.'<br />URL: '.request_uri();
+    $to = 'example@example.com'; // Set this email address - emails will be sent to this email address!
+    $params = array(
+    'body' => 'mon mail',
+    'subject' => 'Website Information Request',
+    );
+
+    if (drupal_mail('formation_prestashop', 'some_mail_key', $to, language_default(), $params, $from, TRUE))
+    {
+        drupal_set_message('Thanks, we will be in contact with more information soon.');
+    } else {
+        drupal_set_message('There was an error subscribing you. Please try again later');
+    }
 }
