@@ -1,0 +1,4 @@
+name = Formation Prestashop
+description = Mon tout premier module drupal
+package = Formation
+core = 7.x

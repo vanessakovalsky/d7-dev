@@ -1,0 +1,32 @@
+<?php
+
+function formation_prestashop_menu(){
+  $items['prest/test/toto'] = array(
+    'title' => 'Ma première page',
+    'description' => 'Une page de demo',
+    'page callback' => 'formation_page_demo',
+    'access arguments' => array('formation demo'),
+  );
+  return $items;
+}
+
+function formation_page_demo(){
+   return 'Salut toto';
+}
+
+function formation_prestashop_permission() {
+  return(array(
+    'formation demo' => array(
+      'title' => t('Accéder aux démos'),
+      'description' => t('Permissions d acceder démo')
+    )
+  ));
+}
+
+function formation_prestashop_menu_alter(&$items){
+  $items['admin/modules'] = array(
+    'title' => 'Liste des modules',
+    'access callback' => TRUE,
+  );
+  return $items;
+}

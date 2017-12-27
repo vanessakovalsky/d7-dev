@@ -1,0 +1,8 @@
+<?php
+
+function formation_prestashop_install() {
+  db_update('system')
+    ->fields(array('weight' => 45))
+    ->condition('name', 'formation_prestashop', '=')
+    ->execute();
+}
