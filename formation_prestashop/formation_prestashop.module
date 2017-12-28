@@ -121,3 +121,10 @@ function formation_prestashop_block_view($delta) {
  // Return result string to render on the block.
  return $block;
 }
+
+function formation_prestashop_views_api(){
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'formation_prestashop') . '/views',
+  );
+}
