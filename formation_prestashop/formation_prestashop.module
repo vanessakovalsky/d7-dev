@@ -5,6 +5,14 @@ function formation_prestashop_menu(){
     'title' => 'Ma première page',
     'description' => 'Une page de demo',
     'page callback' => 'formation_page_demo',
+    'access callback' => TRUE,
+  );
+  $items['prest/test/form'] = array(
+    'title' => 'Mon premier formulaire',
+    'description' => 'Une formulaire de démo',
+    'file' => 'formation_prestashop.form.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('formation_prestashop_form'),
     'access arguments' => array('formation demo'),
   );
   return $items;
