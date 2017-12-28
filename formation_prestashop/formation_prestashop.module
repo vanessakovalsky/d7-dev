@@ -83,3 +83,41 @@ function formation_submit_mail(){
         drupal_set_message('There was an error subscribing you. Please try again later');
     }
 }
+
+function formation_prestashop_block_info(){
+    $blocks['mon_super_block'] = array(
+        'info' => t('Mon merveilleux block en code'),
+    );
+    return $blocks;
+}
+
+function formation_prestashop_block_view($delta) {
+  switch ($delta) {
+   case 'mon_super_block':
+
+     // Block title.
+     $block['subject'] = '' . t('Mon super block') . '';
+
+     // Query node entity and fetch result.
+     $query = new EntityFieldQuery();
+     $entities = $query->entityCondition('entity_type', 'node')
+       ->entityCondition('bundle', 'couleurpage')
+       ->propertyOrderBy('created', 'DESC')
+       ->range(0, 3)
+       ->execute();
+
+     // Initialise array value as empty.
+     $block['content'] = '';
+
+     // Loop through entity quesry result and build a result string.
+     foreach ($entities['node'] as $obj) {
+       $node = node_load($obj->nid);
+       $block['content'] .= l($node->title, "node/" . $node->nid);
+     }
+
+     break;
+   }
+
+ // Return result string to render on the block.
+ return $block;
+}
